@@ -2,7 +2,9 @@
 
 > **End-to-end ML system** for fall detection in surveillance video - combining YOLO pose estimation, Transformer-based temporal sequence modeling, physics-informed FSM refinement, and a real-time inference dashboard. Processes live streams at **30 FPS / <33ms per frame** on CPU-only hardware.
 
-Custom dataset co-created and published at [`ShreeyaTapaswi/falldetectiondataset`](https://github.com/ShreeyaTapaswi/falldetectiondataset).
+**Team:** Shreeya Tapaswi, Samruddhi Lakare, Vedant Karne, Yash Vidhate
+
+Custom dataset co-created and published at [`ShreeyaTapaswi/Fall-Detection-Dataset`](https://github.com/ShreeyaTapaswi/Fall-Detection-Dataset).
 
 ---
 
@@ -36,7 +38,7 @@ A single model trained on pooled data underperforms on both. Two specialized mod
 ### 2. Temporal Sequence Modeling
 - **Architecture**: Transformer encoder (`transformer_standing_fall_detection.pth`) trained on sliding windows of pose sequences
 - Captures **long-range temporal dependencies** in movement patterns that frame-by-frame classifiers miss
-- Trained on custom annotated dataset - see [`falldetectiondataset`](https://github.com/samruddhi-2308/falldetectiondataset) for data collection methodology
+- Trained on custom annotated dataset - see [`Fall-Detection-Dataset`](https://github.com/ShreeyaTapaswi/Fall-Detection-Dataset) for data collection methodology
 
 ### 3. Physics-Informed FSM Refinement
 - A **finite-state machine** (states: `NORMAL → TRANSITION → FALL → ALERT`) with physics-based transition guards
@@ -57,7 +59,7 @@ A single model trained on pooled data underperforms on both. Two specialized mod
 
 Custom fall detection dataset built by our team- annotated video sequences across both fall modalities.
 
-→ [`samruddhi-2308/falldetectiondataset`](https://github.com/samruddhi-2308/falldetectiondataset) - see README for annotation protocol, class distribution, and train/val/test splits.
+→ [`ShreeyaTapaswi/Fall-Detection-Dataset`](https://github.com/ShreeyaTapaswi/Fall-Detection-Dataset) - see README for annotation protocol, class distribution, and train/val/test splits.
 
 ---
 
@@ -75,16 +77,6 @@ scripts/
 inference_outputs/               # Generated annotated videos + event CSVs
 artifacts/                       # Training artifacts and model checkpoints
 ```
-
----
-
-## Team
-
-| Member | Contribution |
-|---|---|
-| **Samruddhi Lakare** | Standing-to-Fall pipeline - feature engineering, FSM design, async inference, integration |
-| **Vedant Karne** | Sleeping-to-Fall pipeline - temporal modeling, integration. [`@vedantkarne`](https://github.com/vedantkarne) |
-| + 2 teammates | Dataset collection, annotation, evaluation |
 
 ---
 
