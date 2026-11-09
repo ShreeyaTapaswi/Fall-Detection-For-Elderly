@@ -2,7 +2,7 @@
 
 > **End-to-end ML system** for fall detection in surveillance video - combining YOLO pose estimation, Transformer-based temporal sequence modeling, physics-informed FSM refinement, and a real-time inference dashboard. Processes live streams at **30 FPS / <33ms per frame** on CPU-only hardware.
 
-Custom dataset co-created and published at [`samruddhi-2308/falldetectiondataset`](https://github.com/samruddhi-2308/falldetectiondataset).
+Custom dataset co-created and published at [`ShreeyaTapaswi/falldetectiondataset`](https://github.com/ShreeyaTapaswi/falldetectiondataset).
 
 ---
 
