@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fall Detection Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #07111f;
+      --panel: rgba(10, 20, 36, 0.92);
+      --panel-2: rgba(17, 29, 48, 0.92);
+      --border: rgba(148, 163, 184, 0.18);
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #0ea5e9;
+      --accent-2: #22c55e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Inter", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(14, 165, 233, 0.18), transparent 35%),
+        radial-gradient(circle at bottom right, rgba(34, 197, 94, 0.16), transparent 30%),
+        linear-gradient(180deg, #07111f 0%, #040914 100%);
+    }
+    .shell {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+    }
+    .hero {
+      margin-bottom: 26px;
+    }
+    .eyebrow {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(14, 165, 233, 0.12);
+      border: 1px solid rgba(14, 165, 233, 0.26);
+      color: #7dd3fc;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    h1 {
+      margin: 14px 0 10px;
+      font-size: clamp(32px, 5vw, 54px);
+      line-height: 1.03;
+    }
+    .hero p {
+      max-width: 720px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.7;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+      gap: 22px;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.22);
+      backdrop-filter: blur(18px);
+    }
+    .card h2 {
+      margin: 0 0 16px;
+      font-size: 18px;
+    }
+    .field {
+      margin-bottom: 18px;
+    }
+    .field label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    select, button, a.button {
+      font: inherit;
+    }
+    select {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--panel-2);
+      color: var(--text);
+    }
+    .dropzone {
+      position: relative;
+      border: 2px dashed rgba(14, 165, 233, 0.34);
+      background: rgba(14, 165, 233, 0.05);
+      border-radius: 18px;
+      min-height: 220px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 22px;
+      transition: 0.2s ease;
+    }
+    .dropzone.drag-over {
+      border-color: #7dd3fc;
+      background: rgba(14, 165, 233, 0.1);
+      transform: translateY(-1px);
+    }
+    .dropzone input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+    .drop-inner strong {
+      display: block;
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+    .drop-inner span {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .file-preview {
+      display: none;
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .file-preview.show { display: flex; }
+    .file-meta { min-width: 0; }
+    .file-name {
+      font-size: 14px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .file-size {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .primary {
+      width: 100%;
+      margin-top: 18px;
+      padding: 14px 16px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--accent), #2563eb);
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .meta-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+    .metric {
+      padding: 14px;
+      border-radius: 14px;
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+    }
+    .metric small {
+      color: var(--muted);
+      display: block;
+      margin-bottom: 6px;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .metric strong { font-size: 17px; }
+    .progress-wrap { margin-top: 18px; }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+    .track {
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.16);
+      overflow: hidden;
+    }
+    .bar {
+      width: 0%;
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      transition: width 0.3s ease;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.16);
+      color: #cbd5e1;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .pill.falling { background: rgba(245, 158, 11, 0.16); color: #fcd34d; }
+    .pill.impact, .pill.fallen { background: rgba(239, 68, 68, 0.16); color: #fca5a5; }
+    .pill.standing { background: rgba(14, 165, 233, 0.16); color: #7dd3fc; }
+    .pill.done { background: rgba(34, 197, 94, 0.16); color: #86efac; }
+    .notifications {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 14px;
+      max-height: 320px;
+      overflow: auto;
+    }
+    .notification {
+      border-radius: 14px;
+      border: 1px solid rgba(239, 68, 68, 0.28);
+      background: rgba(239, 68, 68, 0.1);
+      padding: 14px;
+    }
+    .notification strong {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+    .notification span {
+      color: #fca5a5;
+      font-size: 13px;
+    }
+    .notification.empty {
+      border-style: dashed;
+      background: rgba(148, 163, 184, 0.06);
+      border-color: var(--border);
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 18px;
+    }
+    a.button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 16px;
+      border-radius: 12px;
+      color: white;
+      text-decoration: none;
+      font-weight: 700;
+      min-width: 170px;
+    }
+    .video-button { background: linear-gradient(135deg, #22c55e, #16a34a); }
+    .log-button { background: linear-gradient(135deg, #0ea5e9, #2563eb); }
+    .secondary {
+      margin-top: 14px;
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .toast {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      padding: 12px 16px;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.94);
+      border: 1px solid var(--border);
+      color: var(--text);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: 0.2s ease;
+      pointer-events: none;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+      .meta-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="hero">
+      <div class="eyebrow">AI Fall Monitoring</div>
+      <h1>Upload a video, get detections, video output, and fall-event logs.</h1>
+      <p>
+        Choose the pipeline that matches the test case, drag and drop any video, and the dashboard will stream progress,
+        show fall notifications, generate an annotated output video, and export an Excel-friendly CSV log with timestamps.
+      </p>
+    </div>
+
+    <div class="grid">
+      <section class="card">
+        <h2>Run Detection</h2>
+        <div class="field">
+          <label for="pipeline-select">Detection Profile</label>
+          <select id="pipeline-select">
+            <option value="sleeping">Sleeping-Fall Pipeline</option>
+            <option value="standing">Standing-Fall Pipeline</option>
+          </select>
+        </div>
+
+        <div class="dropzone" id="drop-zone">
+          <input id="file-input" type="file" accept="video/mp4,video/avi,video/quicktime,video/x-matroska" />
+          <div class="drop-inner">
+            <strong>Drag and drop a video here</strong>
+            <span>Supported formats: MP4, AVI, MOV, MKV</span>
+          </div>
+        </div>
+
+        <div class="file-preview" id="file-preview">
+          <div class="file-meta">
+            <div class="file-name" id="preview-name">No file selected</div>
+            <div class="file-size" id="preview-size">0 MB</div>
+          </div>
+          <button class="secondary" id="remove-file" type="button">Remove</button>
+        </div>
+
+        <button class="primary" id="upload-btn" disabled>Choose a video first</button>
+
+        <div class="progress-wrap">
+          <div class="progress-label">
+            <span>Processing Progress</span>
+            <span id="pct-label">0%</span>
+          </div>
+          <div class="track"><div class="bar" id="progress-bar"></div></div>
+        </div>
+
+        <div style="margin-top: 14px;">
+          <span class="pill" id="state-pill">Idle</span>
+        </div>
+
+        <div class="meta-row">
+          <div class="metric">
+            <small>Elapsed</small>
+            <strong id="elapsed">0s</strong>
+          </div>
+          <div class="metric">
+            <small>Frames Reported</small>
+            <strong id="stat-frames">0</strong>
+          </div>
+          <div class="metric">
+            <small>Status</small>
+            <strong id="stat-status">Waiting</strong>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <h2>Notifications and Outputs</h2>
+        <div class="metric" style="margin-bottom: 14px;">
+          <small>Latest State</small>
+          <strong id="stat-state">None</strong>
+        </div>
+        <div class="metric">
+          <small>Selected Pipeline</small>
+          <strong id="pipeline-label">Sleeping-Fall</strong>
+        </div>
+
+        <div class="notifications" id="notifications">
+          <div class="notification empty" id="notifications-empty">
+            <strong>No fall notifications yet</strong>
+            <span>Detected fall states will appear here with timestamps.</span>
+          </div>
+        </div>
+
+        <div class="actions" id="result-actions" style="display:none;">
+          <a class="button video-button" id="download-btn" href="#">Download Video</a>
+          <a class="button log-button" id="download-log-btn" href="#">Download Log (.csv)</a>
+        </div>
+        <button class="secondary" id="process-another" type="button">Reset for another upload</button>
+      </aside>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const dropZone = document.getElementById("drop-zone");
+    const fileInput = document.getElementById("file-input");
+    const filePreview = document.getElementById("file-preview");
+    const previewName = document.getElementById("preview-name");
+    const previewSize = document.getElementById("preview-size");
+    const removeFileBtn = document.getElementById("remove-file");
+    const uploadBtn = document.getElementById("upload-btn");
+    const pipelineSelect = document.getElementById("pipeline-select");
+    const pipelineLabel = document.getElementById("pipeline-label");
+    const progressBar = document.getElementById("progress-bar");
+    const pctLabel = document.getElementById("pct-label");
+    const statePill = document.getElementById("state-pill");
+    const elapsed = document.getElementById("elapsed");
+    const statFrames = document.getElementById("stat-frames");
+    const statState = document.getElementById("stat-state");
+    const statStatus = document.getElementById("stat-status");
+    const notifications = document.getElementById("notifications");
+    const notificationsEmpty = document.getElementById("notifications-empty");
+    const resultActions = document.getElementById("result-actions");
+    const downloadBtn = document.getElementById("download-btn");
+    const downloadLogBtn = document.getElementById("download-log-btn");
+    const processAnotherBtn = document.getElementById("process-another");
+    const toast = document.getElementById("toast");
+
+    let selectedFile = null;
+    let eventSource = null;
+    let timer = null;
+    let startedAt = null;
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(showToast._timer);
+      showToast._timer = setTimeout(() => toast.classList.remove("show"), 3200);
+    }
+
+    function bytesToString(bytes) {
+      if (bytes < 1024) return bytes + " B";
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+      return (bytes / 1024 / 1024).toFixed(2) + " MB";
+    }
+
+    function setState(state) {
+      const normalized = (state || "").toLowerCase();
+      statePill.textContent = state || "Idle";
+      statePill.className = "pill";
+      if (normalized.includes("standing")) statePill.classList.add("standing");
+      if (normalized.includes("falling")) statePill.classList.add("falling");
+      if (normalized.includes("impact")) statePill.classList.add("impact");
+      if (normalized.includes("fallen")) statePill.classList.add("fallen");
+      if (normalized.includes("complete")) statePill.classList.add("done");
+      statState.textContent = state || "None";
+    }
+
+    function pushNotification(notification) {
+      if (!notification) return;
+      notificationsEmpty.style.display = "none";
+      const item = document.createElement("div");
+      item.className = "notification";
+      item.innerHTML = `<strong>${notification.title}</strong><span>${notification.message}</span>`;
+      notifications.prepend(item);
+    }
+
+    function resetUI() {
+      selectedFile = null;
+      fileInput.value = "";
+      filePreview.classList.remove("show");
+      uploadBtn.disabled = true;
+      uploadBtn.textContent = "Choose a video first";
+      progressBar.style.width = "0%";
+      pctLabel.textContent = "0%";
+      setState("Idle");
+      elapsed.textContent = "0s";
+      statFrames.textContent = "0";
+      statStatus.textContent = "Waiting";
+      notifications.innerHTML = "";
+      notifications.appendChild(notificationsEmpty);
+      notificationsEmpty.style.display = "block";
+      resultActions.style.display = "none";
+      pipelineLabel.textContent = pipelineSelect.options[pipelineSelect.selectedIndex].textContent;
+      if (timer) clearInterval(timer);
+      if (eventSource) eventSource.close();
+    }
+
+    function selectFile(file) {
+      selectedFile = file;
+      previewName.textContent = file.name;
+      previewSize.textContent = bytesToString(file.size);
+      filePreview.classList.add("show");
+      uploadBtn.disabled = false;
+      uploadBtn.textContent = "Start inference";
+    }
+
+    pipelineSelect.addEventListener("change", () => {
+      pipelineLabel.textContent = pipelineSelect.options[pipelineSelect.selectedIndex].textContent;
+    });
+
+    dropZone.addEventListener("dragover", (event) => {
+      event.preventDefault();
+      dropZone.classList.add("drag-over");
+    });
+    dropZone.addEventListener("dragleave", () => dropZone.classList.remove("drag-over"));
+    dropZone.addEventListener("drop", (event) => {
+      event.preventDefault();
+      dropZone.classList.remove("drag-over");
+      const file = event.dataTransfer.files[0];
+      if (file) selectFile(file);
+    });
+    fileInput.addEventListener("change", () => {
+      const file = fileInput.files[0];
+      if (file) selectFile(file);
+    });
+    removeFileBtn.addEventListener("click", resetUI);
+    processAnotherBtn.addEventListener("click", resetUI);
+
+    uploadBtn.addEventListener("click", async () => {
+      if (!selectedFile) return;
+
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+      formData.append("pipeline", pipelineSelect.value);
+
+      uploadBtn.disabled = true;
+      uploadBtn.textContent = "Uploading...";
+      statStatus.textContent = "Uploading";
+      notifications.innerHTML = "";
+      notifications.appendChild(notificationsEmpty);
+      notificationsEmpty.style.display = "block";
+      resultActions.style.display = "none";
+
+      let payload;
+      try {
+        const response = await fetch("/upload", { method: "POST", body: formData });
+        payload = await response.json();
+        if (!response.ok) throw new Error(payload.detail || "Upload failed");
+      } catch (error) {
+        showToast(error.message);
+        uploadBtn.disabled = false;
+        uploadBtn.textContent = "Start inference";
+        statStatus.textContent = "Error";
+        return;
+      }
+
+      pipelineLabel.textContent = payload.pipeline_label;
+      uploadBtn.textContent = "Processing...";
+      statStatus.textContent = "Processing";
+      startedAt = Date.now();
+      timer = setInterval(() => {
+        const seconds = Math.floor((Date.now() - startedAt) / 1000);
+        elapsed.textContent = seconds + "s";
+      }, 1000);
+
+      eventSource = new EventSource(`/progress/${payload.job_id}`);
+      let progressEvents = 0;
+
+      eventSource.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        progressBar.style.width = `${data.progress || 0}%`;
+        pctLabel.textContent = `${data.progress || 0}%`;
+        setState(data.state);
+        progressEvents += 1;
+        statFrames.textContent = String(progressEvents);
+
+        if (data.notification) {
+          pushNotification(data.notification);
+          showToast(data.notification.message);
+        }
+
+        if (data.error) {
+          statStatus.textContent = "Error";
+          uploadBtn.textContent = "Start inference";
+          uploadBtn.disabled = false;
+          clearInterval(timer);
+          eventSource.close();
+          return;
+        }
+
+        if (data.done) {
+          clearInterval(timer);
+          eventSource.close();
+          statStatus.textContent = "Completed";
+          uploadBtn.textContent = "Run another video";
+          uploadBtn.disabled = false;
+          setState("Completed");
+          downloadBtn.href = `/download/${payload.job_id}`;
+          downloadBtn.download = payload.download_filename;
+          downloadLogBtn.href = `/download-log/${payload.job_id}`;
+          downloadLogBtn.download = payload.log_download_filename;
+          resultActions.style.display = "flex";
+          showToast("Inference finished. Video and log are ready.");
+        }
+      };
+
+      eventSource.onerror = () => {
+        statStatus.textContent = "Connection issue";
+      };
+    });
+
+    resetUI();
+  </script>
+</body>
+</html>

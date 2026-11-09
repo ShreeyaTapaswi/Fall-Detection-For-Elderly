@@ -1,0 +1,36 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+
+# Model weights
+*.pt
+*.pth
+*.h5
+*.onnx
+
+# Data and Videos
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.npy
+*.npz
+dataset/
+inference_outputs/
+artifacts/
+app/uploads/
+"standing dataset for training"/
+
+# Training logs
+runs/
+*.log
+
+# IDEs
+.vscode/
+.idea/

@@ -1,0 +1,5 @@
+{"event": "Fall Detected", "state": "IMPACT", "channel": "SMS/Mobile App", "timestamp": 1774001509.3739314}
+{"event": "Fall Detected", "state": "FALLEN", "channel": "Emergency Services", "timestamp": 1774001509.5599763}
+{"event": "Fall Detected", "state": "Impact", "channel": "SMS/Mobile App", "timestamp": 1774863112.9491434}
+{"event": "Fall Detected", "state": "Impact", "channel": "SMS/Mobile App", "timestamp": 1774864809.9015574}
+{"event": "Fall Detected", "state": "Impact", "channel": "SMS/Mobile App", "timestamp": 1774870249.7992342}
